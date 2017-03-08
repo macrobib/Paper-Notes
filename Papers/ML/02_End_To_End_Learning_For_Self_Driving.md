@@ -25,3 +25,5 @@
 |  Fully connected |  50 |   |  10 |   |
 
 - Visualizing the representation used by different layers.
+- Implementation in Torch with ports in tensorflow.
+- TODO: Visualizing the layer pattern.
