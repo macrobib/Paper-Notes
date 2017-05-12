@@ -1,0 +1,71 @@
+\subsection{Overview}
+For an task execution scenario consisting of tasks of different criticalities, Mixed Criticality algorithms strives to guarantee worst case execution requirements. One common approach towards this guarantee is dropping tasks of lower criticality when a higher criticality task is not able to meet it's WCET.
+This approach is overly pessimistic, penalizing lower criticality tasks. Another approach to this problem has been to do best effort scheduling for lower criticality tasks in case of a budget overrun.
+But a real life deployment of such tasks consisting of a mixture of low and high criticality calls for guaranteeing a minimum service even for low criticality tasks.
+This paper:
+\begin{itemize}
+	\item Extends EDF-VD scheduling technique to guarantee degraded service for low criticality tasks in high mode.
+	\item Extend demand bound analysis of MC systems, scheduled by mode switch EDF.
+	\item Offline bound to determine resetting time for services provided to low criticality tasks.
+\end{itemize}
+\subsection{Offline Component}
+The offline component encompasses 3 main contributions:
+\subsubsection{Demand Bound Function}
+A generic representation of Demand Bound Function(DBF) is proposed, which takes into account all the tasks that are present in high criticality.\\
+Set of equation to calculate the DBF are given below:\\
+
+\begin{equation}
+\begin{aligned}
+ \textbf{dbf\textsubscript{LO}} =  max\{\lfloor \frac{\Delta - D_i(LO)}{T_i(LO)} \rfloor + 1, 0\}.C_i(LO)
+ \end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+\textit{\textbf{RM}}(\tau_i, \lambda) = C_i(HI) - C_i(LO) + min{D_i(LO) - \lambda, C_i(LO)}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+{\textbf{dbf}^1}_{HI}(\tau_i, \Delta) = max\{\lfloor \frac{\Delta - D_i(HI) + 1, 0}{T_i(HI)} \rfloor\}. C_i(HI)
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+\textbf{dbf}_{RM}(\tau_i,\lambda, \Delta) = \left\{\begin{matrix}
+RM(\tau_i, \lambda) \quad if \quad \Delta \geq D_i(HI) - \lambda,\\ 0 \qquad \qquad if \quad \Delta < D_i(HI) - \lambda
+\end{matrix}\right.
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+{\textbf{dbf}^2}_{HI}(\tau_i, \lambda, \Delta) = dbf_{RM}(\tau_i, \lambda, \Delta) +  max\{\lfloor \frac{\Delta - D_i(HI) - (T_i(HI) - \lambda)}{T_i(HI)} \rfloor \\+ 1, 0\}.C_i(HI) 
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+\textbf{dbf}_{HI}(\tau_i, \Delta) = max\{ {dbf^1}_{HI}(\tau_i, \Delta),\quad max_{0\leq\lambda\leq {D_i}_{LO}}\{{dbf^2}_{HI}\} \}
+\end{aligned}
+\end{equation}
+Equation 8 gives the DBF of any task in HI mode.
+\subsubsection{Service Reconfiguration.}
+Low criticality tasks are guaranteed a minimum service in high criticality mode by using a scaling factor. For this purpose two new variables are introduced: service degradation factor \textit{y} for low criticality tasks and deadline tuning factor \textit{x}. 
+\subsection{Online Component}
+The online component is based on EDF-VD scheduling approach, where low critical tasks are dropped, when a budget overrun in a high critical task is detected.
+This paper proposes two approach to recover system from a high critical mode:
+\begin{itemize}
+	\item Recovery at idle instance.
+	\item Recovery based on MC Service reset time.
+\end{itemize}
+\subsection{Litmus Changes}
+The core kernel scheduler will use EDF-VD implementation, following further changes are introduced for supporting service adaptation:
+\begin{itemize}
+	\item Schedcat implementation of the demand bound function and schedulability test.
+	\item Schedcat support for calculating the deadline tuning factor \textit{x} and service degradation factor \textit{y}.
+	\item rtspin changes to set the value of MC Service reset time.
+	\item litmus-rt edfvd scheduler extended to support MC service reset time. 
+\end{itemize}

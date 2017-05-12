@@ -1,0 +1,17 @@
+\subsection{Overview}
+Classical Mixed Criticality algorithms provide assurances to meet budget requirement of high critical tasks at the cost of dropping low criticality tasks in case of system criticality change.\\
+Other scheduling approaches have proposed means of improving guarantees to low critical tasks. But these approaches does not take into consideration the which tasks interfere with each other and in which order, which is very much application specific.\\
+This scheduling algorithm enables to take task interference specifications from system designed and create a schedule that meets the specific requirement. 
+\subsection{Offline Component}
+The offline component of the proposed algorithm are mainly three:\\
+\begin{itemize}
+	\item A task model to represent the dependency between the tasks as graph.
+	\item A demand bound function(DBF) that is compatible with Audsley's priority assignment approach.
+	\item An algorithm to minimize the interference between the tasks.
+\end{itemize}
+\subsection{Online Component}
+The online component of the algorithm builds upon standard fixed priority scheduling.
+\begin{itemize}
+	\item 
+\end{itemize}
+\subsection{Litmus Changes}
