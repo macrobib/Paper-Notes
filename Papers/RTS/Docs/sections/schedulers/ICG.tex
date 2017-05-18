@@ -12,6 +12,24 @@ The offline component of the proposed algorithm are mainly three:\\
 \subsection{Online Component}
 The online component of the algorithm builds upon standard fixed priority scheduling.
 \begin{itemize}
+	\item Task structure is extended to provide support for variable representing budgets and deadline for a multiple criticality taskset. Though ICG presents the approach for arbitrary number of criticality, Dual criticality is considered for online implementation.
+	\item Each task maintains a list of pointers to tasks that can be dropped in case of a budget overrun.
+	\item For a budget overrun, the list is walked through and task\_struct variable \textit{skipped} flag is set to 1. These tasks are simply requeued when picked from run queue.
+\end{itemize}
+\begin{itemize}
 	\item 
 \end{itemize}
 \subsection{Litmus Changes}
+\textbf{liblitmus change}
+\begin{itemize}
+	\item Task 
+	\item Each task instance of rtspin has to be notified of the tasks that can be penalized in case of budget overruns. This is done in two stages.
+	\item Each new rtspin is assigned an incrementing ID(integer index value) to identify itself and a set of indexes corresponding to the peer rtspin tasks that it can interfere with during an overrun scenario. These IDs are passed to the litmus scheduler as part of \textit{task\_struct} variable.
+\end{itemize}
+\textbf{litmus-rt scheduler plugin}
+\begin{itemize}
+	\item Within litmus scheduler the IDs and dependent IDs are used to create a task dependency list for each \textit{task\_struct} which consists of all the \textit{task\_struct} pointers of dependent tasks.
+	\item During an active schedule, if one of the tasks overruns its budget, then all the \textit{task\_struct} in dependency list are updated. \textit{skip} parameter is set to 1.
+	\item For each invocation of \textit{schedule} function in the ICG Plugin, \textit{skip} parameter is checked. While the parameter is set to 1, the task is not scheduled instead rescheduled for next release instance.
+	\item Parameter knobs are provided to tweak the behavior in case of budget overrun. As per the inference of the example 4.1 in section 4.1, the skipping of the task can be enabled after a minimum number of budget overruns(e.g. \textit{k} overruns in \textit{n} consecutive instances.)
+\end{itemize}
