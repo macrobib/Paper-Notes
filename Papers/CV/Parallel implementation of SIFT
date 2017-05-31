@@ -1,0 +1,9 @@
+#### SIFT Implementation and Optimization for Multi-Core Systems 
+
+Scale Invariant Feature Transform(SIFT) is a common approach used in image matching with implications in object recognition and scene recognition.
+
+##### What SIFT is:
+- SIFT is an approach for detecting and extracting local feature descriptors from images. the major computation stages used to generate the set of image features are: Building Gaussian scale space, Keypoint detection and localization, Orientation assignment, and Keypoint descriptor. Figure below shows the flow.
+
+![SIFT](/home/z420/Documents/Notes/Paper-Notes/Papers/CV/images/SIFT.png  "SIFT")
+- 
